@@ -2,3 +2,6 @@ __pycache__/
 *.pyc
 .DS_Store
 *.tmp
+
+# 原始用户素材与本地转录文件（不应提交到仓库）
+/tmp_extract/
