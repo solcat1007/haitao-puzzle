@@ -93,7 +93,10 @@ def main():
     print(f"总题数: {len(puzzles)}")
     print(f"难度分布: {dict(dist)}")
     print(f"剔除异常块: {dropped}")
-    avg_surface = sum(len(p["surface"]) for p in puzzles) / len(puzzles)
+    avg_surface = (
+        sum(len(p["surface"]) for p in puzzles) / len(puzzles)
+        if puzzles else 0
+    )
     print(f"汤面平均长度: {avg_surface:.0f} 字")
 
 if __name__ == "__main__":
