@@ -14,6 +14,7 @@
 - **难度分级**：简单 / 中等 / 烧脑（启发式标注，供出题参考）。
 - **零依赖**：数据为纯 JSON，脚本仅用 Python 标准库，随处可跑。
 - **可扩展**：附带 `ingest/` 解析脚本，按约定格式即可导入自己的题库。
+- **v2.0 新增**：分类检索、关键词搜索、递进式提示命令行工具。
 
 ## 快速开始
 
@@ -56,6 +57,45 @@ PY
 5. **揭底**：玩家说出接近真相的推理，或主动放弃时，公布 `solution`。
 
 详细的主持规则见 [`SKILL.md`](./SKILL.md)。
+
+## 🆕 v2.0 更新说明
+
+### 1. 分类检索工具 `puzzle_tools.py`
+零依赖命令行工具，按难度/关键词快速选题：
+
+```bash
+python puzzle_tools.py --stats                       # 题库统计与完整度检查
+python puzzle_tools.py --list --difficulty 简单       # 按难度列出
+python puzzle_tools.py --search 医院 --no-solution    # 关键词检索（默认不剧透）
+python puzzle_tools.py --random --difficulty 烧脑     # 按难度随机抽题
+```
+
+### 2. 递进式提示系统
+`--hint N` 只给出第 N 条提示，主持人可逐级放出，不会一次性剧透汤底：
+
+```bash
+python puzzle_tools.py --id 42 --hint 1    # 第 1 条（最模糊）
+python puzzle_tools.py --id 42 --hint 2    # 更明确一条
+python puzzle_tools.py --id 42 --solution  # 仅在揭底时使用
+```
+
+### 3. 防剧透设计
+`cmd_show()` 默认隐藏 `solution`，必须显式加 `--solution` 才显示；
+Skill 规则也同步更新，要求主持人只在玩家放弃或猜中时揭底。
+
+### 4. 题库条目：刻意不扩充
+`DATA_NOTICE.md` 明确「题面与汤底未做情节改写，`key_facts` 与 `hints` 不新增内容」。
+因此 v2.0 **不新增谜题条目**，只升级检索与提示能力；需要更多题请用
+`ingest/build_puzzles.py` 导入你拥有版权或已获授权的题库。
+
+## 🥚 彩蛋秘籍
+
+| 入口 | 触发方式 | 效果 |
+| --- | --- | --- |
+| `--easter` | `python puzzle_tools.py --easter` | 输出 SOLCAT ASCII 署名与隐藏提示 |
+| 编号彩蛋 | `python puzzle_tools.py --id 42` | 答案也许就藏在编号里 ;) |
+
+通用秘籍（其他 SOLCAT 项目）：↑↑↓↓←→←→BA、连点标题 5 次、输入 `solcat`、Ctrl+Shift+T。
 
 ## 数据格式
 
@@ -113,6 +153,7 @@ haitao-puzzle/
 ├── DATA_NOTICE.md         # 题库来源与使用声明
 ├── puzzles/
 │   └── puzzles.json       # 143 道题（题面 + 汤底 + 判定事实 + 提示）
+├── puzzle_tools.py        # v2.0 题库检索 / 提示 / 抽题工具
 └── ingest/
     └── build_puzzles.py   # 题库解析脚本（纯标准库）
 ```
